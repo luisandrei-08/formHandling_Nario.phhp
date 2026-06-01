@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Profile Form</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .result {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Student Profile Form</h1>
+
+    <form id="profileForm">
+
+        <label>Student Name:</label>
+        <input type="text"
+               id="name"
+               name="name"
+               pattern="[A-Za-z\s]+"
+               title="Letters only"
+               required>
+
+        <label>Gender:</label><br>
+
+        <input type="radio" name="gender" value="Male" required> Male
+        <input type="radio" name="gender" value="Female"> Female
+
+        <br><br>
+
+        <label>Year Level:</label>
+
+        <select id="yearLevel" name="yearLevel" required>
+            <option value="">-- Select Year Level --</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+        </select>
+
+        <label>Programming Skills:</label><br>
+
+        <input type="checkbox" name="skills" value="HTML"> HTML <br>
+        <input type="checkbox" name="skills" value="CSS"> CSS <br>
+        <input type="checkbox" name="skills" value="PHP"> PHP <br>
+        <input type="checkbox" name="skills" value="JavaScript"> JavaScript
+
+        <br><br>
+
+        <label>Comments:</label>
+
+        <textarea id="comments" name="comments" rows="5" required></textarea>
+
+        <input type="submit"
+               name="submit"
+               value="Submit"
+               class="submit-btn">
+
+    </form>
+
+    <div id="resultBox" class="result">
+        <hr>
+        <h2>Submitted Information</h2>
+        <p><strong>Name:</strong> <span id="resName"></span></p>
+        <p><strong>Gender:</strong> <span id="resGender"></span></p>
+        <p><strong>Year Level:</strong> <span id="resYear"></span></p>
+        <p><strong>Skills:</strong> <span id="resSkills"></span></p>
+        <p><strong>Comments:</strong> <span id="resComments"></span></p>
+    </div>
+
+</div>
+
+<script>
+function sanitize(string) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;',
+        "/": '&#x2F;',
+    };
+    const reg = /[&<>"'/]/ig;
+    return string.trim().replace(reg, (match) => (map[match]));
+}
+
+document.getElementById('profileForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nameVal = sanitize(document.getElementById('name').value);
+    const yearVal = document.getElementById('yearLevel').value;
+    const commentsVal = sanitize(document.getElementById('comments').value);
+
+    const genderElem = document.querySelector('input[name="gender"]:checked');
+    const genderVal = genderElem ? genderElem.value : '';
+
+    const checkedSkills = document.querySelectorAll('input[name="skills"]:checked');
+    let skillsArray = [];
+    checkedSkills.forEach((checkbox) => {
+        skillsArray.push(sanitize(checkbox.value));
+    });
+    const skillsVal = skillsArray.length > 0 ? skillsArray.join(', ') : "No skills selected";
+
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(nameVal)) {
+        alert("Student name must contain letters only.");
+        return;
+    }
+
+    if (!nameVal || !genderVal || !yearVal || !commentsVal) {
+        alert("All fields are required.");
+        return;
+    }
+
+    document.getElementById('resName').textContent = nameVal;
+    document.getElementById('resGender').textContent = genderVal;
+    document.getElementById('resYear').textContent = yearVal;
+    document.getElementById('resSkills').textContent = skillsVal;
+    document.getElementById('resComments').textContent = commentsVal;
+
+    document.getElementById('resultBox').style.display = 'block';
+});
+</script>
+
+</body>
+</html>
